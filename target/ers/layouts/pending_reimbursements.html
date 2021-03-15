@@ -1,0 +1,210 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" 
+	"http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+	<title>ERS</title>
+	
+	<link rel="stylesheet" 
+		  href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css" 
+		  integrity="sha384-B0vP5xmATw1+K9KRQjQERJvTumQW0nPEzvF6L/Z6nronJ3oUOFUFpCjEUQouq2+l" 
+		  crossorigin="anonymous">  <!-- cdn -->
+		  
+	<link rel="stylesheet" href="./resources/stylesheets/style.css" />	
+		  
+	<script src="https://code.jquery.com/jquery-3.6.0.js"
+			integrity="sha256-H+K7U5CnXl1h5ywQfKtSj8PCmoN9aaq30gDh27Xc0jk="
+			crossorigin="anonymous"></script>	
+			
+	<style>
+		.resize {
+			width: 85%;
+		}
+	</style>		
+			
+	<script>
+		function readData(name) { //read the cookie
+			let cookie = {};
+			document.cookie.split(';').forEach(function(el) {
+			    let [k,v] = el.split('=');
+			    cookie[k.trim()] = v;
+			})
+			return cookie[name];
+		}
+
+		const capitalize = (s) => {
+			  if (typeof s !== 'string') return ''
+			  return s.charAt(0).toUpperCase() + s.slice(1)
+		}			
+	
+		document.addEventListener("DOMContentLoaded", function(){ //onload page
+	        $.ajax({
+		          type: 'Get',
+		          url: 'reimbursement?option=preimbursement',
+		          data: '',
+		          success: function(result) { //result is defined by the servlet doGet method
+		        	  //console.log("The result:: "+result);	        	   
+		        	  const reimbursementsArr = result;         	  
+	  
+					  //loop through reimbursements array to display reimbursements
+					  reimbursementsArr.forEach(function(reimbursement){
+			                var tbodyRef = document.getElementById('tblReimbursements')
+			                				.getElementsByTagName('tbody')[0];
+	
+				            // Insert a row at the end of table
+				            var newRow = tbodyRef.insertRow();
+				            //Insert a cell at the end of the row. And, append a text node to the cell
+				            //Insert cell description
+				            var description = document.createTextNode(reimbursement.description);
+				            newRow.insertCell().appendChild(description);
+	
+				            //Insert cell amount
+				            var amount = document.createTextNode("$"+reimbursement.amount);
+				            //amount.style.textAlign = "right";
+				            newRow.insertCell().appendChild(amount);
+	
+				            //Insert cell type
+				            var type = document.createTextNode(capitalize(reimbursement.type));
+				            newRow.insertCell().appendChild(type);
+	
+				            //Insert cell status
+				            var status = document.createTextNode(capitalize(reimbursement.status));
+				            newRow.insertCell().appendChild(status);				            
+	
+				            //Insert cell actions
+				            const image = document.createElement('img')
+				            image.src  = 'image?image=/opt/web/wildfly-20.0.0.Final/standalone/data/webapp.temp/edit.gif'
+					            
+				            const a = document.createElement('a');
+				            a.appendChild(image);
+				            a.title = "Click on to edit this request.";
+				            a.href = "reimbursement?option=display&reimbursementId="+(reimbursement.reimbursementId);
+				            				            
+				            newRow.insertCell().appendChild(a);				            	         			            				            		                
+					  }); 
+		          }, error:function(msg) {
+		        	  console.log("Fail to get reimbursement data..."+msg);
+			      }
+		    });	
+	
+			
+			//get connected user from the cookie and display it on the link
+			const connectedUser = readData('connected_user');
+			var text = document.createTextNode(connectedUser);
+			document.getElementById("logout").appendChild(text);
+			document.getElementById("logout").title = "Click on to logout "+connectedUser;
+				
+			const userRole = readData('user_role');
+			if(userRole=="employee") {
+				document.getElementById("preimbursements").style.display = "none";
+				document.getElementById("allreimbursements").style.display = "none";
+				document.getElementById("addEmployee").style.display = "none";
+				document.getElementById("browseEmployee").style.display = "none";
+			} else if(userRole=="manager") {
+				document.getElementById("vreimbursements").style.display = "none";
+			}
+	});	    	
+	</script>			     	  			    
+</head>
+<body >
+	<nav class="nav">
+		<span id="grandTitle">Employee Reimbursement System</span>
+	</nav>
+	<nav class="navigation">	
+		<div class="container">
+			<div class="row">
+				<div class="pad">
+			        <a id="home" href="webapp?option=home" class="menu-button">
+			           Home
+			        </a>
+				</div>
+						
+				<div class="pad">
+			        <a href="webapp?option=reimbursement" class="menu-button">
+			           Reimbursement
+			        </a>
+				</div>
+				
+				<div id="vreimbursements" class="pad">
+			        <a href="webapp?option=vreimbursements" class="menu-button">
+			           View reimbursements
+			        </a>
+				</div>			
+				
+				<div id="preimbursements" class="pad">
+			        <a href="webapp?option=preimbursements" class="menu-button">
+			           Pending reimbursements
+			        </a>
+				</div>
+				
+				<div id="allreimbursements" class="pad">
+			        <a href="webapp?option=allreimbursements" class="menu-button">
+			           All reimbursements
+			        </a>
+				</div>		
+		
+				<div id="addEmployee" class="pad">
+				     <a href="webapp?option=addEmployee" class="menu-button">
+				         Add employee
+				     </a>
+				</div>
+							
+				<div id="browseEmployee" class="pad">
+			        <a href="webapp?option=browseEmployee" class="menu-button">
+			           List of employees
+			        </a>
+				</div>		   	    
+				
+				<div class="pad">
+			        <a id="profile" href="webapp?option=profile" class="menu-button"> 
+			           Profile
+			        </a>
+				</div>
+				
+				<div class="pad">
+			        <a id="logout" href="webapp?option=logout" class="menu-button">
+			        </a>
+				</div>		       
+			</div>
+		</div>
+	</nav>
+	
+	<br/>
+    	
+	<div class="container justify-content-center">		
+	    <div class="headtitle justify-content-center">
+			Pending reimbursements 	
+	    </div>
+	    
+	    <br/>	
+	
+		<form method="POST" action="reimbursement">
+			<div class="item">
+				<table
+					id="tblReimbursements"
+					class="table table-hover table-striped table-bordered resize"> 
+				    <thead class="thead-light">
+				      <tr>
+				        <th class="text-center" style="width: 45%;">Description</th>
+				          
+				        <th class="text-center" style="width: 10%;">Amount</th>	
+				            
+				        <th class="text-center" style="width: 15%;">Type</th>
+				        
+				        <th class="text-center" style="width: 15%;">Status</th>
+				        
+				        <th class="text-center" style="width: 15%;">Actions</th>
+				      </tr>
+				    </thead>
+				    <tbody id="tblReimbursementBody"></tbody>		    
+				</table>
+			</div>
+		</form>	
+	</div>
+</body>
+<footer class="footer">
+	<div class="container text-center">
+		<span>&copy;All rights reserved by Hector V. @ Revature</span>
+	</div>
+</footer>
+		  
+</html>

@@ -1,0 +1,75 @@
+
+<link rel="stylesheet"
+	href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css"
+	integrity="sha384-B0vP5xmATw1+K9KRQjQERJvTumQW0nPEzvF6L/Z6nronJ3oUOFUFpCjEUQouq2+l"
+	crossorigin="anonymous" />
+	
+<link rel="stylesheet" href="./resources/stylesheets/style.css" />	
+
+<nav class="nav">
+	<span id="grandTitle">Employee Reimbursement System</span>
+</nav>
+
+<br/><br/><br/><br/>
+
+<div class="container justify-content-center">
+    <div class="headtitle">
+		Enter your user name and password, please! 	
+    </div>
+
+	<br/>
+	
+	<form id="authenticationForm" 
+		action="webapp?option=login" 
+		method="POST"
+		class="row g-3 needs-validation">
+		
+		<div class="container justify-content-center"> <!-- begin main container -->	 
+			<div class="row">
+				<div>
+					<label class="label" for="userName">User name*</label> 		
+				</div>
+					
+				<div class="col, separator">
+					<input
+						id="userName"
+						name="userName"
+						type="text" 
+						class="form-control input" 	
+						placeholder="Enter employee's user name" /> 
+											
+				</div>
+			</div>							
+								
+			<div class="row">
+				<div>
+					<label class="label" for="password">Password*</label> 		
+				</div>
+					
+				<div class="col, separator">
+					<input
+						id="password"
+						name="password"
+						type="password" 
+						class="form-control input" /> 									
+				</div>
+			</div>
+
+			<div class="row" style="margin-left: 100px; margin-top: 15px; margin-bottom: 20px;">
+				<div>
+					<button type="submit" 
+				      		id="btnLogin"
+						    class="btn btn-primary" 
+						    style="width: 175px">Login</button> 		      
+				</div>
+			</div>
+
+		</div>	<!-- end main container -->		
+	</form>	  
+</div>
+
+<footer class="footer">
+	<div class="container text-center">
+		<span>&copy;All rights reserved by Hector V. @ Revature</span>
+	</div>
+</footer>

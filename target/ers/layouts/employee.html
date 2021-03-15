@@ -1,0 +1,545 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<link rel="stylesheet" 
+		  href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css" 
+		  integrity="sha384-B0vP5xmATw1+K9KRQjQERJvTumQW0nPEzvF6L/Z6nronJ3oUOFUFpCjEUQouq2+l" 
+		  crossorigin="anonymous">  <!-- cdn -->
+		         
+	<link rel="stylesheet" href="./resources/stylesheets/style.css" />
+		
+	<style>
+		.input {
+			width: 300px;
+		}
+		
+		.header {
+		  background-color: #F1F1F1;
+		  text-align: center;
+		  padding: 20px;
+		  height:50px;
+		}	
+		
+		.column {
+			width: 150px;
+			margin-top: 5px;	
+		}	
+		
+		.separator {
+			padding-bottom: 10px;
+		}	
+		
+		.form {
+			/* margin-left: 300px; */
+			align-items: center;
+		}
+		
+		.picture {
+		    width:100%;
+		    height:100%;		
+		}
+		
+		.picture-frame {
+		    width:300px;
+		    height:300px;
+			margin-left: 50px;
+			margin-top: 20px;
+		    background-color:#D7E6FB;
+		    border-left:2px solid #0040FF; /* frame color */
+		    border-right:2px solid #0040FF;
+		    border-bottom:2px solid #0040FF;
+		    border-top:2px solid #0040FF;
+		}			
+	</style>
+
+	<script src="https://code.jquery.com/jquery-3.6.0.js"
+			integrity="sha256-H+K7U5CnXl1h5ywQfKtSj8PCmoN9aaq30gDh27Xc0jk="
+			crossorigin="anonymous"></script>	
+
+	<script>
+		function readData(name) { //read the cookie
+			let cookie = {};
+			document.cookie.split(';').forEach(function(el) {
+			    let [k,v] = el.split('=');
+			    cookie[k.trim()] = v;
+			})
+			return cookie[name];
+		}
+	
+		document.addEventListener("DOMContentLoaded", function(){ //onload page
+			//get url parameters
+			let URL = 'webapp'+window.location.search; //should return for example: ?option=profile
+
+		    $.ajax({
+		        type: 'Get',
+		        url: URL,
+		        data: '',
+		        success: function(result) { //result is defined by the servlet doGet method			        
+				  const employee = readData('employee_profile'); //employee profile transport through cookie	
+
+		          if (typeof employee !== 'undefined') { 
+					  var employeeArr = employee.split("^");
+					  employeeArr.forEach(function(employee){
+						  //console.log(employee);
+						  
+						  const fieldName = employee.substring(0, employee.indexOf(":"))
+						  					.replace('"', ''); //firstIndexOf
+						  //console.log("Field->"+fieldName); 
+						  const fieldValue= employee.substring(employee.indexOf(':') + 1)
+						  					.replace('"', '');; //lastIndexOf
+						  //console.log("Value->"+fieldValue);
+	
+						  if(fieldName!="gender" && fieldName!="pictureFile") {
+						  	document.getElementById(fieldName).value = fieldValue;
+
+						  	if(fieldName=="userName") {
+						  		document.getElementById('userName').readOnly = true; 
+						  	}
+						  } else if(fieldName=="gender"){
+							if(fieldValue=="M") 
+								document.getElementById('rdGenderM').checked = true;
+							 else 
+								document.getElementById('rdGenderF').checked = true;						  
+						  } else if(fieldName=="pictureFile"){
+			    				let image = document.getElementById("picture");
+			    				image.setAttribute("src", 'image?image='+fieldValue);								    			
+						  }											
+						});
+						
+					    //delete the cookie after using it					
+					    document.cookie = 'employee_profile=; Max-Age=0';
+	          		}									      	  	        	  
+	        	}, error:function(msg) {
+	      	  	    console.log("Fail to populate employee data...");
+		      }
+	  	   });
+
+		   let message = readData('ers_message');	
+		   console.log(message);
+		   if (typeof message !== 'undefined') { 
+		   		let messages = message.split(":");
+				if(messages[0]=="success") {
+				    document.getElementById('successBar').style.display = "block";	
+				    document.getElementById('failBar').style.display = "none";	
+				    document.getElementById('success').innerHTML = messages[1];
+				} else if(messages[0]=="fail") {
+	        		document.getElementById('successBar').style.display = "none";
+	        		document.getElementById('failBar').style.display = "block";
+	        		document.getElementById('fail').innerHTML = messages[1];
+				} else {
+	        		document.getElementById('successBar').style.display = "none";
+	        		document.getElementById('failBar').style.display = "none";
+				}
+		   } else {
+	       		document.getElementById('successBar').style.display = "none";
+	    		document.getElementById('failBar').style.display = "none";
+		   }
+
+		   //toggle menu
+			//get connected user from the cookie and display it on the link
+			const connectedUser = readData('connected_user');
+			var text = document.createTextNode(connectedUser);
+			document.getElementById("logout").appendChild(text);
+			document.getElementById("logout").title = "Click on to logout "+connectedUser;
+			
+			const userRole = readData('user_role');
+			if(userRole=="employee") {
+				document.getElementById("preimbursements").style.display = "none";
+				document.getElementById("allreimbursements").style.display = "none";
+				document.getElementById("addEmployee").style.display = "none";
+				document.getElementById("browseEmployee").style.display = "none";
+			} else if(userRole=="manager") {
+				document.getElementById("vreimbursements").style.display = "none";
+			}
+		}); 
+	</script>	 		
+</head>
+
+<body>
+	<nav class="nav">
+		<span id="grandTitle">Employee Reimbursement System</span>
+	</nav>
+	<nav class="navigation">	
+		<div class="container">
+			<div class="row">
+				<div class="pad">
+			        <a id="home" href="webapp?option=home" class="menu-button">
+			           Home
+			        </a>
+				</div>
+						
+				<div class="pad">
+			        <a href="webapp?option=reimbursement" class="menu-button">
+			           Reimbursement
+			        </a>
+				</div>
+				
+				<div id="vreimbursements" class="pad">
+			        <a href="webapp?option=vreimbursements" class="menu-button">
+			           View reimbursements
+			        </a>
+				</div>		
+				
+				<div id="preimbursements" class="pad">
+			        <a href="webapp?option=preimbursements" class="menu-button">
+			           Pending reimbursements
+			        </a>
+				</div>
+				
+				<div id="allreimbursements" class="pad">
+			        <a href="webapp?option=allreimbursements" class="menu-button">
+			           All reimbursements
+			        </a>
+				</div>		
+		
+				<div id="addEmployee" class="pad">
+				     <a href="webapp?option=addEmployee" class="menu-button">
+				         Add employee
+				     </a>
+				</div>
+							
+				<div id="browseEmployee" class="pad">
+			        <a href="webapp?option=browseEmployee" class="menu-button">
+			           List of employees
+			        </a>
+				</div>		   	    
+				
+				<div class="pad">
+			        <a id="profile" href="webapp?option=profile" class="menu-button"> 
+			           Profile
+			        </a>
+				</div>
+				
+				<div class="pad">
+			        <a id="logout" href="webapp?option=logout" class="menu-button">
+			        </a>
+				</div>		       
+			</div>
+		</div>
+	</nav>
+	
+	<br/>
+    	
+	<div class="container justify-content-center">
+	
+		<!-- For messaging -->
+	    <div id="successBar" class="success-message justify-content-center" style="display: none;">
+			<p id="success"></p>	
+	    </div>
+	    
+	    <div id="failBar" class="fail-message justify-content-center" style="display: none;">
+			 <p id="fail"></p>	
+	    </div>	    
+	    
+	    <br/>
+	    	    	
+	    <div class="headtitle justify-content-center">
+			<a href="#" 
+				title="Click on to refresh the page."
+				onclick="window.location.reload(false)"> 				
+				Employee profile
+			</a>	 	
+	    </div>
+	    
+	    <br/>	
+	    
+		<form id="employeeForm" 
+			  action="employee" 
+			  method="POST"
+			  enctype="multipart/form-data" 
+			  class="row g-3 needs-validation">
+			  		
+			<div class="container"> <!-- begin main container -->
+				<div class="row">	<!-- main row -->
+					<div> <!-- column info -->	
+							
+						<div class="container"> <!-- begin info container -->
+							<div class="row">
+								<div class="column">
+									<label for="firstName">First name*</label> 				
+								</div>
+				
+								<div class="col, separator">
+									<input
+										id="firstName"
+										name="firstName"
+										type="text" 
+										class="form-control input"
+										placeholder="Enter employee's first name"
+										required /> 
+										<div class="valid-feedback">
+										      First name is a required field.
+										</div>									
+								</div>
+							</div>
+							
+							<div class="row">
+								<div class="column">
+									<label for="lastName">Last name*</label> 			
+								</div>
+				
+								<div class="col, separator">
+									<input
+										id="lastName"
+										name="lastName"
+										type="text" 
+										class="form-control input" 
+										placeholder="Enter employee's last name"
+										required /> 
+										<div class="valid-feedback">
+										      Last name is a required field.
+										</div>				
+								</div>
+							</div>
+							
+							<div class="row">
+								<div class="column">
+						  			<label for="gender">Gender*</label>		
+								</div>
+				
+								<div class="col, separator">
+									<div class="form-check form-check-inline">
+									  <input class="form-check-input" 
+											  type="radio" 
+											  name="gender" 
+											  id="rdGenderF" 
+											  value="F">
+									  <label class="form-check-label" for="rdGenderF">Female</label>
+									</div>
+									
+									<div class="form-check form-check-inline">
+									  <input class="form-check-input" 
+											  type="radio" 
+											  name="gender" 
+											  id="rdGenderM" 
+											  value="M">
+									  <label class="form-check-label" for="rdGenderM">Male</label>
+									</div>				  				
+								</div>
+							</div>
+										
+							<div class="row">
+								<div class="column">
+									<label for="nationalId">National ID*</label> 			
+								</div>
+				
+								<div class="col, separator">
+									<input
+										id="nationalID"
+										name="nationalId"
+										type="text" 
+										class="form-control input" 	
+										placeholder="Enter employee's id"			
+										required /> 
+										<div class="valid-feedback">
+										      National id is a required field.
+										</div>										
+								</div>
+							</div>
+							
+							<div class="row">
+								<div class="column">
+									<label for="address">Address*</label> 			
+								</div>
+				
+								<div class="col, separator">
+									<input
+										id="address"
+										name="address"
+										type="text" 
+										class="form-control input" 
+										placeholder="Enter employee's address"				
+										required /> 
+										<div class="valid-feedback">
+										      Address is a required field.
+										</div>											
+								</div>
+							</div>
+							
+							<div class="row">
+								<div class="column">
+									<label for="telephone">Telephone*</label> 			
+								</div>
+				
+								<div class="col, separator">
+									<input
+										id="phone"
+										name="telephone"
+										type="text" 
+										class="form-control input" 				
+										placeholder="Enter employee's telephone"
+										required /> 
+										<div class="valid-feedback">
+										    Telephone is a required field.
+										</div>										
+								</div>
+							</div>	
+							
+							<div class="row">
+								<div class="column">
+									<label for="email">Email*</label> 		
+								</div>
+				
+								<div class="col, separator">
+									<input
+										id="email"
+										name="email"
+										type="email" 
+										class="form-control input" 	
+										placeholder="Enter employee's email"			
+										required /> 
+										<div class="valid-feedback">
+										    Email is a required field.
+										</div>										
+								</div>
+							</div>
+							
+							<div class="row">
+								<div class="column">
+									<label for="userName">User name*</label> 		
+								</div>
+				
+								<div class="col, separator">
+									<input
+										id="userName"
+										name="userName"
+										type="text" 
+										class="form-control input" 	
+										placeholder="Enter employee's user name"			
+										required /> 
+										<div class="valid-feedback">
+										    User name is a required field.
+										</div>										
+								</div>
+							</div>							
+							
+							<div class="row">
+								<div class="column">
+									<label for="password">Password*</label> 		
+								</div>
+				
+								<div class="col, separator">
+									<input
+										id="password"
+										name="password"
+										type="password" 
+										class="form-control input" 			
+										required /> 
+										<div class="valid-feedback">
+										    Password is a required field.
+										</div>										
+								</div>
+							</div>
+							
+							<div class="row">
+								<div class="column">
+									<label for="confirmPassword">Confirm password</label> 		
+								</div>
+				
+								<div class="col, separator">
+									<input
+										id="confirmPassword"
+										name="confirmPassword"
+										type="password" 
+										class="form-control input" /> 								
+								</div>
+							</div>							
+						</div>	<!-- end info container -->			
+					</div> <!-- End column info -->
+			
+					<!-- column picture -->
+
+					<div> 
+						<div id="pictureFrame" class="picture-frame"> 
+							<a href="#" onclick="document.getElementById('pictureFile').click();">
+								<img id="picture" 
+									 src=""
+									 title="Click on to select a picture"
+									 class="picture" />
+							</a>
+						</div>
+						
+						<!-- upload picture file here -->						
+						<input  type="file" 
+								id="pictureFile"
+								name="pictureFile"
+								accept=".png, .gif, .jpeg, .jpg"								 
+								style="display: none;" />								
+					</div>
+				</div> <!-- End main row -->			
+			</div> <!-- End main container -->
+
+			<div class="container" style="margin-top: 15px; margin-bottom: 20px;">
+			  <div class="row">
+			    <div class="col text-center">
+			      <button type="submit" 
+			      		  id="btnSave"
+					      class="btn btn-primary" 
+					      style="width: 175px">Save</button> 		      
+			    </div>
+			  </div>
+			</div>	
+			
+			<!-- the hidden fields -->												
+			<input type="text" 
+				   id="employeeId" 
+				   name="employeeId"	
+				   value="0"							 
+				   style="display: none;" />
+				   
+			<input type="text" 
+				   id="userId" 
+				   name="userId"	
+				   value="0"							 
+				   style="display: none;" />				   
+		</form>
+	</div>
+
+	<script>
+		function readURL(input) {
+		    if (input.files && input.files[0]) {
+		        var reader = new FileReader();
+
+		        reader.onload = function (e) {
+		            $('#picture').attr('src', e.target.result);
+		        }
+				profile.addEventListener("click", function()	{	
+
+					//get url parameters
+					const URL = 'webapp'+window.location.search; //should return for example: ?option=profile
+					
+				    $.ajax({
+				        type: 'Get',
+				        url: 'webapp?option=profile',
+				        data: '',
+				        success: function(result) { //result is defined by the servlet doGet method
+				      	  console.log("The result:: "+result);	        	   
+				      	  //const employeesArr = result; //JSON.parse(result);	        	  
+			     			            				            		                
+
+			        }, error:function(msg) {
+			      	  console.log("Fail to populate employee data...");
+				      }
+			  	   });
+			  	   
+					});
+				  	   	
+		        reader.readAsDataURL(input.files[0]);
+		    }
+		}
+
+		$("#pictureFile").change(function(){
+		    readURL(this);
+		});				
+	</script>
+
+</body>
+<footer class="footer">
+	<div class="container text-center">
+		<span>&copy;All rights reserved by Hector V. @ Revature</span>
+	</div>
+</footer>
+
+</html>

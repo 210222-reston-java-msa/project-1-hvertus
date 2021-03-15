@@ -1,0 +1,112 @@
+@import "~bootstrap/dist/css/bootstrap.min.css";
+
+A:link {text-decoration: none; font-size:13pt;}
+A:visited {text-decoration: none; font-size:13pt;}
+A:active {text-decoration: none; font-size:13pt;}
+A:hover {text-decoration: none; font-size:13pt; color: yellow;}
+
+@font-face { /*Custom font*/
+	font-family: 'VastShadow-Regular'; /*a name to be used later*/
+	src: url('../fonts/VastShadow-Regular.ttf'); /*URL to font*/
+}
+
+#grandTitle {
+	color: #FFFFFF;
+	font-size: 30pt;
+	font-family: VastShadow-Regular;
+	text-align: right;
+	margin-right: 0px;
+	float: left;
+	clear: left;
+	/* padding-top: 10px; */
+	vertical-align: top;
+}
+
+#successBar {
+	width: 700px;
+	color: #FFFFFF;
+	background-color: #b0cbf7;
+	font-size: 13pt;
+	border-top:2px solid  #043482;
+	border-bottom: 2px solid  #043482;	
+}
+
+#failBar {
+	width: 700px;
+	color: #FFFFFF;
+	background-color: #f79cad;
+	font-size: 13pt;
+	border-top:2px solid #8a031c;
+	border-bottom: 2px solid #8a031c;	
+}
+
+.nav {
+	background-color: #14167f;
+}
+
+.navigation {
+	width: 100%;
+	height: 40px;
+	background-color: #d4d8da;
+}
+
+.footer {
+	position: absolute;
+	bottom: 0;
+	width: 100%;
+	height: 35px;
+	background-color: #d4d8da;
+	text-align: center;
+	color: #14167f;
+}
+
+.column {
+	width: 150px;
+	margin-top: 5px;
+}
+
+.separator {
+	padding-bottom: 10px;
+}
+
+.label {
+	width: 200px;
+	margin-top: 9px;
+	margin-right: 10px;
+	font-size: 13pt;
+	font-family: tahoma, Helvetica, sans-serif;
+	font-style: normal;
+	text-align: right;
+	border-bottom: dotted #cccccc 1px;
+}
+
+.headtitle {
+	width: 700px;
+	line-height: 30px;
+	font-size: 15pt;
+	vertical-align: middle;
+	font-family: tahoma, Helvetica, sans-serif;
+	font-style: normal;
+	background-color: #ece8d1;
+}
+
+.menu-button {
+  color: white;	
+  height: 25px;
+  display: inline-block;
+  font-size: 13pt;
+  cursor: pointer;
+  text-align: center;
+  text-decoration: none;
+  outline: none;
+  padding: 0px 7px;
+  background-color: #616263;
+  border: none;
+  border-radius: 7px;
+  box-shadow: 0 5px #999;
+}
+
+.pad {
+	padding-top: 5px;
+	padding-right: 15px;
+}
